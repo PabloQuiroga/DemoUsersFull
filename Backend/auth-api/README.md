@@ -90,6 +90,38 @@ To illustrate the architecture, the `User` feature is implemented with a strict 
 
 This separation ensures the domain remains pure and independent of the database technology, making the system more modular, testable, and easier to maintain.
 
+## Docker Deployment
+
+This project includes a `Dockerfile` and a `docker-compose.yml` file to facilitate deployment.
+
+### Building the Docker Image
+
+To build the Docker image for the application, first package the application:
+
+```shell script
+./mvnw package
+```
+
+Then, build the image:
+
+```shell script
+docker build -t auth-api .
+```
+
+### Running with Docker Compose
+
+To run the application along with a MySQL database, use Docker Compose:
+
+```shell script
+docker-compose up -d
+```
+
+This will start:
+- **auth-db**: A MySQL 8.0 database container.
+- **auth-api**: The Quarkus application container, connected to the database.
+
+The API will be accessible at `http://localhost:8080`.
+
 ## Related Guides
 
 - REST ([guide](https://quarkus.io/guides/rest)): A Jakarta REST implementation utilizing build time processing and Vert.x. This extension is not compatible with the quarkus-resteasy extension, or any of the extensions that depend on it.
