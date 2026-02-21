@@ -2,6 +2,7 @@ package org.siar.application;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
+import org.siar.application.usecase.LoginUserUseCase;
 import org.siar.application.usecase.RegisterUserUseCase;
 import org.siar.domain.repository.UserRepository;
 
@@ -12,5 +13,11 @@ public class UseCaseConfig {
     @ApplicationScoped
     public RegisterUserUseCase registerUserUseCase(UserRepository userRepository) {
         return new RegisterUserUseCase(userRepository);
+    }
+
+    @Produces
+    @ApplicationScoped
+    public LoginUserUseCase loginUserUseCase(UserRepository userRepository) {
+        return new LoginUserUseCase(userRepository);
     }
 }
