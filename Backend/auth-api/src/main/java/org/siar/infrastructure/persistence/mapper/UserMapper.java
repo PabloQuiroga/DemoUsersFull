@@ -1,16 +1,12 @@
 package org.siar.infrastructure.persistence.mapper;
 
 import org.siar.domain.model.User;
-import jakarta.enterprise.context.ApplicationScoped;
 import org.siar.infrastructure.persistence.entity.UserEntity;
 
-@ApplicationScoped
 public class UserMapper {
 
-    public User toDomain(UserEntity entity) {
-        if (entity == null) {
-            return null;
-        }
+    public static User toDomain(UserEntity entity) {
+        if (entity == null) return null;
         return User.builder()
                 .id(entity.id)
                 .username(entity.username)
@@ -26,38 +22,20 @@ public class UserMapper {
                 .build();
     }
 
-    public UserEntity toEntity(User domain) {
-        if (domain == null) {
-            return null;
-        }
+    public static UserEntity toEntity(User user) {
+        if (user == null) return null;
         UserEntity entity = new UserEntity();
-        entity.id = domain.getId();
-        entity.username = domain.getUsername();
-        entity.email = domain.getEmail();
-        entity.passwordHash = domain.getPasswordHash();
-        entity.status = domain.getStatus();
-        entity.failedAttempts = domain.getFailedAttempts();
-        entity.blockedUntil = domain.getBlockedUntil();
-        entity.lastLoginAt = domain.getLastLoginAt();
-        entity.lastLoginIp = domain.getLastLoginIp();
-        entity.createdAt = domain.getCreatedAt();
-        entity.updatedAt = domain.getUpdatedAt();
+        entity.id = user.getId();
+        entity.username = user.getUsername();
+        entity.email = user.getEmail();
+        entity.passwordHash = user.getPasswordHash();
+        entity.status = user.getStatus();
+        entity.failedAttempts = user.getFailedAttempts();
+        entity.blockedUntil = user.getBlockedUntil();
+        entity.lastLoginAt = user.getLastLoginAt();
+        entity.lastLoginIp = user.getLastLoginIp();
+        entity.createdAt = user.getCreatedAt();
+        entity.updatedAt = user.getUpdatedAt();
         return entity;
-    }
-
-    public void updateEntityFromDomain(User domain, UserEntity entity) {
-        if (domain == null || entity == null) {
-            return;
-        }
-        // ID y createdAt no se actualizan
-        entity.username = domain.getUsername();
-        entity.email = domain.getEmail();
-        entity.passwordHash = domain.getPasswordHash();
-        entity.status = domain.getStatus();
-        entity.failedAttempts = domain.getFailedAttempts();
-        entity.blockedUntil = domain.getBlockedUntil();
-        entity.lastLoginAt = domain.getLastLoginAt();
-        entity.lastLoginIp = domain.getLastLoginIp();
-        entity.updatedAt = domain.getUpdatedAt();
     }
 }

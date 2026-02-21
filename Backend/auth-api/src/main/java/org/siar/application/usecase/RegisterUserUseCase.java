@@ -1,5 +1,6 @@
 package org.siar.application.usecase;
 
+import io.quarkus.elytron.security.common.BcryptUtil;
 import lombok.RequiredArgsConstructor;
 import org.siar.domain.model.User;
 import org.siar.domain.model.UserStatus;
@@ -12,7 +13,7 @@ public class RegisterUserUseCase {
 
     private final UserRepository userRepository;
 
-    public User execute(String username, String email, String passwordHash) {
+    public User execute(String username, String email, String password) {
 
         userRepository.findByUsername(username)
                 .ifPresent(u -> {
@@ -23,6 +24,9 @@ public class RegisterUserUseCase {
                 .ifPresent(u -> {
                     throw new IllegalArgumentException("Email already exists");
                 });
+
+        // Hash the password before saving
+        String passwordHash = BcryptUtil.bcryptHash(password);
 
         User user = User.builder()
                 .username(username)
