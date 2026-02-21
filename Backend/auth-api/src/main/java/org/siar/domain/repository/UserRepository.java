@@ -1,4 +1,4 @@
-package org.siar.domain.port;
+package org.siar.domain.repository;
 
 import org.siar.domain.model.User;
 import java.util.Optional;

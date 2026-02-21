@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.siar.domain.exception.InvalidCredentialsException;
 import org.siar.domain.exception.UserBlockedException;
 import org.siar.domain.model.User;
-import org.siar.domain.port.UserRepository;
+import org.siar.domain.repository.UserRepository;
 
 @RequiredArgsConstructor
 public class LoginUserUseCase {

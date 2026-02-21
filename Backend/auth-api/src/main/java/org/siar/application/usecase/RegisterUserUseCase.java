@@ -3,7 +3,7 @@ package org.siar.application.usecase;
 import lombok.RequiredArgsConstructor;
 import org.siar.domain.model.User;
 import org.siar.domain.model.UserStatus;
-import org.siar.domain.port.UserRepository;
+import org.siar.domain.repository.UserRepository;
 
 import java.time.LocalDateTime;
 

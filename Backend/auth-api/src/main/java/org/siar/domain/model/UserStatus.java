@@ -2,6 +2,7 @@ package org.siar.domain.model;
 
 public enum UserStatus {
     ACTIVE,
+    INACTIVE,
     BLOCKED,
-    DISABLED
+    PENDING_VERIFICATION
 }
