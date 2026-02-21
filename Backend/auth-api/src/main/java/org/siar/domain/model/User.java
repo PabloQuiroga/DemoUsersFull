@@ -1,77 +1,59 @@
 package org.siar.domain.model;
 
-import java.util.Objects;
+import lombok.*;
+import java.time.LocalDateTime;
 
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class User {
 
-    private String id;
+    private Long id;
+
     private String username;
     private String email;
-    private String password; // Considerar no almacenar password en el dominio, o al menos no en texto plano
+    private String passwordHash;
 
-    public User() {
+    private UserStatus status;
+
+    private int failedAttempts;
+    private LocalDateTime blockedUntil;
+
+    private LocalDateTime lastLoginAt;
+    private String lastLoginIp;
+
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+
+    /*
+     * ==========
+     * Reglas de negocio básicas
+     * ==========
+     */
+
+    public boolean isBlocked() {
+        if (status != UserStatus.BLOCKED) return false;
+        if (blockedUntil == null) return false;
+        return blockedUntil.isAfter(LocalDateTime.now());
     }
 
-    public User(String id, String username, String email, String password) {
-        this.id = id;
-        this.username = username;
-        this.email = email;
-        this.password = password;
+    public void registerFailedAttempt(int maxAttempts, int blockMinutes) {
+        this.failedAttempts++;
+
+        if (this.failedAttempts >= maxAttempts) {
+            this.status = UserStatus.BLOCKED;
+            this.blockedUntil = LocalDateTime.now().plusMinutes(blockMinutes);
+        }
     }
 
-    // Getters
-    public String getId() {
-        return id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    // Setters
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return Objects.equals(id, user.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-               "id='" + id + '\'' +
-               ", username='" + username + '\'' +
-               ", email='" + email + '\'' +
-               '}';
+    public void registerSuccessfulLogin(String ip) {
+        this.failedAttempts = 0;
+        this.status = UserStatus.ACTIVE;
+        this.blockedUntil = null;
+        this.lastLoginAt = LocalDateTime.now();
+        this.lastLoginIp = ip;
     }
 }
+
