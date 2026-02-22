@@ -42,55 +42,46 @@ public class UserResource {
     @POST
     @Path("/register")
     public Response register(@Valid RegisterUserRequest request) {
-        try {
-            User user = registerUserUseCase.execute(
-                    request.getUsername(),
-                    request.getEmail(),
-                    request.getPassword()
-            );
+        User user = registerUserUseCase.execute(
+                request.getUsername(),
+                request.getEmail(),
+                request.getPassword()
+        );
 
-            UserResponse response = UserResponse.builder()
-                    .id(user.getId())
-                    .username(user.getUsername())
-                    .email(user.getEmail())
-                    .status(user.getStatus())
-                    .createdAt(user.getCreatedAt())
-                    .build();
+        UserResponse response = UserResponse.builder()
+                .id(user.getId())
+                .username(user.getUsername())
+                .email(user.getEmail())
+                .status(user.getStatus())
+                .createdAt(user.getCreatedAt())
+                .build();
 
-            return Response.status(Response.Status.CREATED).entity(response).build();
-        } catch (IllegalArgumentException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
-        }
+        return Response.status(Response.Status.CREATED).entity(response).build();
     }
 
     @POST
     @Path("/login")
     public Response login(@Valid LoginRequest request, @Context HttpServerRequest httpRequest) {
-        try {
-            String ipAddress = httpRequest.remoteAddress().host();
-            User user = loginUserUseCase.execute(request.getUsername(), request.getPassword(), ipAddress);
+        String ipAddress = httpRequest.remoteAddress().host();
+        User user = loginUserUseCase.execute(request.getUsername(), request.getPassword(), ipAddress);
 
-            String token = tokenService.generateToken(user);
+        String token = tokenService.generateToken(user);
 
-            UserResponse userResponse = UserResponse.builder()
-                    .id(user.getId())
-                    .username(user.getUsername())
-                    .email(user.getEmail())
-                    .status(user.getStatus())
-                    .createdAt(user.getCreatedAt())
-                    .build();
+        UserResponse userResponse = UserResponse.builder()
+                .id(user.getId())
+                .username(user.getUsername())
+                .email(user.getEmail())
+                .status(user.getStatus())
+                .createdAt(user.getCreatedAt())
+                .build();
 
-            LoginResponse response = LoginResponse.builder()
-                    .token(token)
-                    .message("Login successful")
-                    .user(userResponse)
-                    .build();
+        LoginResponse response = LoginResponse.builder()
+                .token(token)
+                .message("Login successful")
+                .user(userResponse)
+                .build();
 
-            return Response.ok(response).build();
-
-        } catch (IllegalArgumentException | IllegalStateException e) {
-            return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
-        }
+        return Response.ok(response).build();
     }
 
     @GET
