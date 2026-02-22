@@ -5,7 +5,7 @@ import java.util.Optional;
 
 public interface UserRepository {
 
-    Optional<User> findById(Long id);
+    Optional<User> findUserById(Long id);
 
     Optional<User> findByUsername(String username);
 
@@ -13,5 +13,5 @@ public interface UserRepository {
 
     User save(User user);
 
-    void deleteById(Long id);
+    boolean deleteById(Long id);
 }

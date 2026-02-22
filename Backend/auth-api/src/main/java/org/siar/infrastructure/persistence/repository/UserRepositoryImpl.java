@@ -14,7 +14,7 @@ import java.util.Optional;
 public class UserRepositoryImpl implements UserRepository, PanacheRepository<UserEntity> {
 
     @Override
-    public Optional<User> findById(Long id) {
+    public Optional<User> findUserById(Long id) {
         return find("id", id).firstResultOptional().map(UserMapper::toDomain);
     }
 
@@ -43,7 +43,7 @@ public class UserRepositoryImpl implements UserRepository, PanacheRepository<Use
 
     @Override
     @Transactional
-    public void deleteById(Long id) {
-        delete("id", id);
+    public boolean deleteById(Long id) {
+        return delete("id", id) > 0;
     }
 }
