@@ -1,14 +1,18 @@
 package org.siar.infrastructure.rest;
 
+import io.quarkus.security.Authenticated;
 import io.vertx.core.http.HttpServerRequest;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.eclipse.microprofile.jwt.JsonWebToken;
+import org.siar.application.usecase.GetUserUseCase;
 import org.siar.application.usecase.LoginUserUseCase;
 import org.siar.application.usecase.RegisterUserUseCase;
 import org.siar.domain.model.User;
+import org.siar.domain.service.TokenService;
 import org.siar.infrastructure.rest.dto.LoginRequest;
 import org.siar.infrastructure.rest.dto.LoginResponse;
 import org.siar.infrastructure.rest.dto.RegisterUserRequest;
@@ -24,6 +28,15 @@ public class UserResource {
 
     @Inject
     LoginUserUseCase loginUserUseCase;
+
+    @Inject
+    GetUserUseCase getUserUseCase;
+
+    @Inject
+    TokenService tokenService;
+
+    @Inject
+    JsonWebToken jwt;
 
     @POST
     @Path("/register")
@@ -56,6 +69,8 @@ public class UserResource {
             String ipAddress = httpRequest.remoteAddress().host();
             User user = loginUserUseCase.execute(request.getUsername(), request.getPassword(), ipAddress);
 
+            String token = tokenService.generateToken(user);
+
             UserResponse userResponse = UserResponse.builder()
                     .id(user.getId())
                     .username(user.getUsername())
@@ -65,7 +80,7 @@ public class UserResource {
                     .build();
 
             LoginResponse response = LoginResponse.builder()
-                    .token("dummy-jwt-token") // TODO: Implement JWT generation
+                    .token(token)
                     .message("Login successful")
                     .user(userResponse)
                     .build();
@@ -75,5 +90,24 @@ public class UserResource {
         } catch (IllegalArgumentException | IllegalStateException e) {
             return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
         }
+    }
+
+    @GET
+    @Path("/me")
+    @Authenticated
+    public Response me() {
+        String username = jwt.getName();
+        return getUserUseCase.execute(username)
+                .map(user -> {
+                    UserResponse response = UserResponse.builder()
+                            .id(user.getId())
+                            .username(user.getUsername())
+                            .email(user.getEmail())
+                            .status(user.getStatus())
+                            .createdAt(user.getCreatedAt())
+                            .build();
+                    return Response.ok(response).build();
+                })
+                .orElse(Response.status(Response.Status.NOT_FOUND).build());
     }
 }
