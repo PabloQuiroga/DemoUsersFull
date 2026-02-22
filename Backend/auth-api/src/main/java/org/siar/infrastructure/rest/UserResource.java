@@ -3,6 +3,7 @@ package org.siar.infrastructure.rest;
 import io.quarkus.security.Authenticated;
 import io.vertx.core.http.HttpServerRequest;
 import jakarta.inject.Inject;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
@@ -40,7 +41,7 @@ public class UserResource {
 
     @POST
     @Path("/register")
-    public Response register(RegisterUserRequest request) {
+    public Response register(@Valid RegisterUserRequest request) {
         try {
             User user = registerUserUseCase.execute(
                     request.getUsername(),
@@ -64,7 +65,7 @@ public class UserResource {
 
     @POST
     @Path("/login")
-    public Response login(LoginRequest request, @Context HttpServerRequest httpRequest) {
+    public Response login(@Valid LoginRequest request, @Context HttpServerRequest httpRequest) {
         try {
             String ipAddress = httpRequest.remoteAddress().host();
             User user = loginUserUseCase.execute(request.getUsername(), request.getPassword(), ipAddress);
