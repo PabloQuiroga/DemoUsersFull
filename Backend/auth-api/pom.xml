@@ -102,6 +102,12 @@
             <version>5.11.0</version>
             <scope>test</scope>
         </dependency>
+        <!-- Swagger -->
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-smallrye-openapi</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>
